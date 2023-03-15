@@ -36,31 +36,33 @@ public class PatientServiceController {
     @Value("${error.message}")
     private String errorMessage;
 
-    private SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm"); //Date d1 = formater.parse("2021-10-19 16:20");
+    private final SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm"); //Date d1 = formater.parse("2021-10-19 16:20");
 
     private final PatientService patientService;
+    private final PatientDAO patientDAO;
+    private final JavaMailSender emailSender; //отправляет письма
+    private final EncrytedPasswordUtils bCryptPasswordEncoder;
+    private final SavePatientSerImpl savePatientSerImpl;
+    private final RandomGenerated randomGenerated; //генерирует логин и пароль
+    private final VirtualPatientDAO virtualPatientDAO;
+    private final DoctorDAO doctorDAO;
+    private final TimetableDAO timetableDAO;
 
-    @Autowired
-    public PatientServiceController (PatientService patientService){
+    public PatientServiceController (PatientService patientService,PatientDAO patientDAO,JavaMailSender emailSender,
+                                     EncrytedPasswordUtils bCryptPasswordEncoder,SavePatientSerImpl savePatientSerImpl,
+                                     RandomGenerated randomGenerated,VirtualPatientDAO virtualPatientDAO,DoctorDAO doctorDAO,
+                                     TimetableDAO timetableDAO)
+    {
         this.patientService = patientService;
+        this.patientDAO = patientDAO;
+        this.emailSender = emailSender;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.savePatientSerImpl = savePatientSerImpl;
+        this.randomGenerated = randomGenerated;
+        this.virtualPatientDAO = virtualPatientDAO;
+        this.doctorDAO = doctorDAO;
+        this.timetableDAO = timetableDAO;
     }
-
-    @Autowired
-    public PatientDAO patientDAO;
-    @Autowired
-    public JavaMailSender emailSender; //отправляет письма
-    @Autowired
-    EncrytedPasswordUtils bCryptPasswordEncoder;
-    @Autowired
-    public SavePatientSerImpl savePatientSerImpl;
-    @Autowired
-    public RandomGenerated randomGenerated; //генерирует логин и пароль
-    @Autowired
-    public VirtualPatientDAO virtualPatientDAO;
-    @Autowired
-    public DoctorDAO doctorDAO;
-    @Autowired
-    public TimetableDAO timetableDAO;
 
     @CrossOrigin
     @RequestMapping(value = "/registration", method = RequestMethod.POST)

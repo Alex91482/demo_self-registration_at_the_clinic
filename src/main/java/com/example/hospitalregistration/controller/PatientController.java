@@ -14,8 +14,11 @@ import java.util.List;
 @Controller
 public class PatientController { //на данный момент тут будут rest архетектура
 
-    @Autowired
-    private PatientDAO patientDAO;
+    private final PatientDAO patientDAO;
+
+    public PatientController(PatientDAO patientDAO){
+        this.patientDAO = patientDAO;
+    }
 
     @GetMapping(value = "/patients")
     public ResponseEntity<List<Patient>> getAllPatient() {

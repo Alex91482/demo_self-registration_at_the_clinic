@@ -3,7 +3,6 @@ package com.example.hospitalregistration.controller;
 import com.example.hospitalregistration.dao.DoctorDAO;
 import com.example.hospitalregistration.entity.Doctor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +13,11 @@ import java.util.List;
 @Controller
 public class DoctorController {
 
-    @Autowired
-    private DoctorDAO doctorDAO;
+    private final DoctorDAO doctorDAO;
+
+    public DoctorController(DoctorDAO doctorDAO){
+        this.doctorDAO = doctorDAO;
+    }
 
     @RequestMapping(value = "/doctors", method = RequestMethod.GET)
     public String showDoctor(Model model) {

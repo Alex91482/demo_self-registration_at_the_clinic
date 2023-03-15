@@ -2,42 +2,46 @@ package com.example.hospitalregistration.security.config;
 
 import com.example.hospitalregistration.security.UserDetailsServiceImpl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
 
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
+
+    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService){
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    @Autowired
-    protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        return authenticationProvider;
     }
 
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception { //дефолтовый юзер для регистрации  Your login: 90898083 Your password: gJHMERmb
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception { //дефолтовый юзер для регистрации  Your login: 90898083 Your password: gJHMERmb
 
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/patients/**").hasRole("ADMIN")
                 .antMatchers("/patientHome").hasRole("PATIENT")
                 .antMatchers(
-                        "/**","/home/**",
+                        "/home/**",
                         "/doctors","/doctorNameTimetable/**","/doctorTimetable/**","/doctorMonthTimetable/**",
                         "/registration/**","/pageMailMessage",
                         "/login", "/logout", "/403","/logoutSuccessful"
@@ -52,9 +56,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .logout()
-                .permitAll()
-                .logoutSuccessUrl("/");
+                .logoutSuccessUrl("/")
+                .and()
+                .exceptionHandling()
+                .accessDeniedPage("/403")
+                .and()
+                .authenticationProvider(authenticationProvider())
+        ;
 
+        return http.build();
     }
 }
 

@@ -1,7 +1,6 @@
 package com.example.hospitalregistration.init;
 
 
-import com.example.hospitalregistration.entity.Recording;
 import com.example.hospitalregistration.service.serializable.SavePatientSerImpl;
 import com.example.hospitalregistration.service.patientservice.PatientService;
 
@@ -12,26 +11,24 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
 
 @Component
 public class DataInit implements ApplicationRunner {
 
-    private SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private final SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private long count = 0;
 
     private final PatientService patientService; //репозиторий к которому обращаются при поиске зарезервированных записей
+    private final SavePatientSerImpl savePatientSer; //сервис отвечающей за сериализацию и десериализацию
 
     @Autowired
-    public SavePatientSerImpl savePatientSer; //сервис отвечающей за сериализацию и десериализацию
-
-    @Autowired
-    public DataInit (PatientService patientService){
+    public DataInit (PatientService patientService, SavePatientSerImpl savePatientSer){
         this.patientService = patientService;
+        this.savePatientSer = savePatientSer;
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception{
-        long count = 0;
 
         boolean search  = savePatientSer.existenceFile(); //проверяем есть ди сериализованный файл
 

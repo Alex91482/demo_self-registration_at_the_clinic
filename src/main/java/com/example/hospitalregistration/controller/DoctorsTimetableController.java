@@ -2,7 +2,6 @@ package com.example.hospitalregistration.controller;
 
 import com.example.hospitalregistration.dao.DoctorsTimetableDAO;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +14,11 @@ import java.util.Map;
 @Controller
 public class DoctorsTimetableController {
 
-    @Autowired
-    DoctorsTimetableDAO doctorsTimetableDAO;
+    private final DoctorsTimetableDAO doctorsTimetableDAO;
+
+    public DoctorsTimetableController(DoctorsTimetableDAO doctorsTimetableDAO){
+        this.doctorsTimetableDAO = doctorsTimetableDAO;
+    }
 
     private final DateTimeFormatter format1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
