@@ -38,8 +38,8 @@ public class WebSecurityConfig {
 
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/patients/**").hasRole("ADMIN")
-                .antMatchers("/patientHome").hasRole("PATIENT")
+                .antMatchers("/patients/**").hasAuthority("ADMIN")
+                .antMatchers("/patientHome").hasAuthority("PATIENT")
                 .antMatchers(
                         "/home/**",
                         "/doctors","/doctorNameTimetable/**","/doctorTimetable/**","/doctorMonthTimetable/**",
